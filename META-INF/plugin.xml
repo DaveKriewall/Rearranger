@@ -1,0 +1,52 @@
+<idea-plugin version="2" url="http://java.net/projects/rearranger">
+	<name>Rearranger</name>
+	<description>
+ Rearranges (reorders) class and class member declarations according to a user-specified order and/or method call hierarchy;
+ generates section-marking comments;
+ provides several controls for spacing within and between methods and classes; and
+ permits the user to manually rearrange items.
+</description>
+
+    <change-notes>
+        1) (Version 5.5)
+          Recompiled for IDEA 11.  Thanks to Denis Zhdanov at IJ for the necessary patches.
+    </change-notes>
+
+	<!-- plugin version: ALSO CHANGE CONSTANT IN Rearranger.java -->
+	<version>5.5</version>
+	<vendor email="dave.kriewall at gmail.com" url="">Dave Kriewall</vendor>
+
+	<!-- minimum and maximum IDEA version plugin is supposed to work with -->
+	<idea-version since-build="110.365"/>
+
+<application-components>
+   <component>
+      <implementation-class>com.wrq.rearranger.Rearranger</implementation-class>
+   </component>
+</application-components>
+	<!-- Component's actions -->
+	<actions>
+		<action id="Rearranger" class="com.wrq.rearranger.RearrangerAction" text="Rearranger"
+            description="Rearrange class and class member declarations according to a user-specified order.">
+			<keyboard-shortcut first-keystroke="control alt shift R" keymap="$default"/>
+			<add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditMenu" anchor="last"/>
+		</action>
+		<action id="RearrangeProjectTree" class="com.wrq.rearranger.ProjectTreeActionHandler" text="Rearranger"
+            description="Rearrange class and class member declarations according to a user-specified order.">
+<!--            <add-to-group group-id="EditMenu" anchor="last"/>      -->
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+		</action>
+
+        <action id="LiveRearranger" class="com.wrq.rearranger.LiveRearrangerAction" text="Live Rearranger"
+        description="Permits user to manually rearrange class and class member declarations.">
+            <keyboard-shortcut first-keystroke="ctrl COMMA" keymap="$default"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+            <add-to-group group-id="EditMenu" anchor="last"/>
+        </action>
+
+    </actions>
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+</idea-plugin>

@@ -1,0 +1,271 @@
+--------------------------------------------------------------------------
+On 2003/11/12 20:27, Dave Kriewall wrote:
+> Please let me know if you have other ideas, too.
+
+- Rearranging a selection
+
+Sometimes you can't rearrange an entire file because some field depends
+on order of initialization. Rearranging the file would break the code.
+In that case I would like to be able to select part of the file to
+rearrange.
+
+Thanks for your great plugin!
+Bas
+
+--------------------------------------------------------------------------
+See whole discussion or manage your watch notification at
+http://www.intellij.net/tracker/viewSCR?threadId=53679#622845
+
+
+
+Re: [Request:Rearranger] Getter/Setter  Posted: Jan 7, 2004 2:09 AM
+Posted By: Johannes Schneider    Posts: 153 / Registered: Aug, 2002
+One more:
+
+addObject( Object o){
+    objects.add( o );
+}
+removeObject( Object o){
+    objects.remove( o );
+}
+
+
+are also something special...
+
+ Re: [Request:Rearranger] Getter/Setter  Posted: Jan 7, 2004 3:34 AM
+Posted By: Dave Kriewall    Posts: 348 / From: Seattle, WA / Registered: Sep, 2002
+
+These are perhaps "logical" getters/setters. Would it work to have two rules:
+
+1) methods whose names match "addObject"
+2) methods whose names match "removeObject"
+
+to simply select them by name?
+
+If the names make these getters unique (as opposed to the function of the method body), you could match them all
+with a wildcard regex like "add([A-Z].*)".  Perhaps we need a way to say, "the name of the corresponding setter
+for this getter is 'remove' + getter field name." What if I added another attribute to the Method rule panel to
+that effect? Then your rule would be something like
+
+All methods whose names match "add([A-Z].*)"; group each with corresponding method named "remove\1"
+
+where \1 substitutes the buffered contents of the parenthesized regular expression.
+
+Only drawback I see to this arrangement is that these paired methods (which you probably view as logical
+getter/setters) won't be grouped with the "real" getters/setters, because they won't match a rule like:
+
+all getter/setter methods
+
+Proposed solution: Create a new "G/S definition" pane, containing a list. Initially, list contains "Getter/Setter"
+and "Adder/Remover".  Choose an item from the list and edit it.  (List order is immaterial.  Add/chg/delete items.)
+Editing brings up dialog: name of rule; getter pattern ("(get|is)(.*)"); setter pattern ("set\2");
+getter body pattern ("\2 = param"); setter body pattern (".*" or "%v = %p" or combined)
+
+This allows any number of relationships and any number of getter/setter definitions. Then let the method rule
+definition choose the type(s) of getter/setter definitions.
+
+-------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------
+Dave,
+
+
+
+I'd like the ability to define rule-and-profile-based rearrangement .
+I think this
+ - would allow you to satisfy more specific request like this one, (part 1/, below: method profiles)
+ - would make the plugin even more useful (part 2/ below: rule-based rearrangement).
+
+What it is :
+  In a same project, depending on some conditions, the plugin would(could) choose to use a different
+  rearrangement rules for individual classes.
+
+
+Example 1 : servlets.
+------------------
+
+  "If the class is a servlet, put those 3 methods at the top of the class."
+     doPost (..)
+     doGet  (..)
+     handle (..)
+
+
+
+Example 2 : applications
+-----------------------
+  "If the class extends Object, put "main()" at the top of the class.
+
+
+etc...
+
+
+
+
+I see 2 implementations "challenges" in this request.
+
+1/
+- define method "profiles", groups.
+     Ex:   "doPost(..), doGet(..), handle(..)
+     Ex:   standard (strict) accessors
+     Ex:   relaxed accessors
+     ...
+I feel this feature would be useful right now, even if you don't
+implement the 2nd part (see below).
+
+
+
+
+2/
+- rule based rearranging
+    if   (condition on class)
+    then sort the methods this way.
+
+
+Alain
+
+--------------------------------------------------------------------------
+See whole discussion or manage your watch notification at
+http://www.intellij.net/tracker/viewSCR?threadId=63427#763315
+
+Live Rearranger:
+- expand node corresponding to cursor location
+- hide any root nodes with no siblings to be hidden.
+
+--------------------------------------------------------------------------
+A suggestion for a usability enhancement from a dumb user ;)
+
+I've been having problems using this plugin for a while - it never
+seemed to arrange things in the way I wanted - but I've not had a chance
+to properly work out why 'til now.
+
+What was happening was that I'd always end up with some methods at the
+end of my file no matter what I did.  Then I realised what it was - I'd
+set up all the conditions for special methods, e.g. abstract,
+getter/setters, inner classes etc. but that everything else that didn't
+satisfy these conditions was sent to the end of the file.  Once I set up
+an item for non-specific methods it all worked beautifully.
+
+So in essence there is an implicit item in the list "All other methods"
+which is always at the end, but invisible.  I was just thinking it might
+stop others getting confused like me if an explicit undeletable element
+was added for "All other methods"; it would also be more convenient for
+the user to have this already defined as it would be one less entry to
+construct and is always used.
+
+Maybe if I worked from the default layout that is now provided I
+wouldn't have got this problem, and because of that you might not want
+to bother, but I just thought I'd suggest it.
+
+Cheers again for the great plugin! :)
+
+N.
+
+--------------------------------------------------------------------------
+
+- method rules should inherit global G/S definition unless explicitly overriding.
+
+- display "default" rule always.
+
+- automatically (optionally) indent separator comments
+
+- exclude from extracted method processing doesn't work (e.g., RelatedMethodsPane - exclude "main" method -
+   extracted methods appear under main.
+
+- generated comments emitted in wrong order; see Rearranger.java@102:
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+// End Methods of Interface JDOMExternalizable
+    public final RearrangerSettings getSettings()
+
+- keep getter/setter with field definition
+
+Hi!
+
+public interface IModule
+{
+    String getRole();
+
+    void setRole(String s);
+}
+
+after rearrange
+
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+    public String getRole()
+    {
+        return role;
+    }
+
+...
+// --------------------- Interface IModule ---------------------
+
+    public void setRole(String role)
+    {
+        this.role = role;
+        log = Logger.getLogger(role);
+    }
+
+A bit confusing I think. Rearranger in standard configuration.
+
+___
+/** WBR @author Denis Tsyplakov @ICQ_UIN 108477017
+    @mailto: lc(at)yandex.ru */
+
+------
+rearrangement of static items breaks ability to compile with default configuration: (Frederic Donckel)
+class A
+{
+    static Integer i;
+    {
+        i = new Integer(6);
+    }
+    static int j = i.intValue();
+}
+
+------
+The rearranger plugin is messing up classes which contain anonymous inner classes. Here's an simple example, all in one file named Tester.java:
+
+public class Tester{
+    void test(){
+        X x = new X(){};
+    }
+}
+interface X{}
+
+When I run rearranger on the above code the first bracket "{" gets deleted which of course put source into an invalid state. Depending on the starting whitespace in the file the messing up sometimes happens on the 2nd running of rearranger and sometimes a different character gets deleted.
+
+Is this a bug or might I have something misconfigured. I am using version 3.5.
+
+More information and a fix: This problem seems to be happening because my Spacing configuration was inconsistent. I had checked both "Force 0 blank lines after class open brace" and "Force 1 blank line before method open brace".
+(Brian Buckley)
+
+-----
+Under Pallada, Rearranger isn't called by Reformat plugin. - Nathan Brown
+
+It appears that getters/setters aren't detected properly in interfaces,
+even if I set up getter/setter detection to only look at the method
+signature. - Nathan Brown
+
+----
+http://www.intellij.net/forums/thread.jsp?forum=18&thread=109048&message=3384393#3384393
+Rearranger not calling reformatter anymore? Or user error?
+
+I recently upgraded to 4.5.1, build 2239, and of course, my plugins were all gone again... I re-d/l the ones I use, including rearranger, but reformatter was not an option (why not?).
+
+I went to the plugin site, got the jar, installed manually, and everything /works/, but it seems like rearranger is not automatically chaining to reformatter anymore like it used to.
+
+Is this a known thing, something I'm doing wrong, something else?
+
+Thanks
+
+Michael
+-----
+Rearanger plugin broke in build 3193 
+
+Error message: Error during dispatching of java.awt.event.MouseEvent[MOUSE_RELEASED,(111,515),button=1,modifiers=Button1,clickCount=1] on ###overrideRedirect###java.lang.NoSuchMethodError: com.intellij.psi.search.PsiSearchHelper.getAccessScope(Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/search/SearchScope;	at com.wrq.rearranger.entry.ClassEntry.parseMethod(ClassEntry.java:314)	at com.wrq.rearranger.entry.ClassEntry.parseRemainingClassContents(ClassEntry.java:169)	at com.wrq.rearranger.entry.ClassEntry.parseClass(ClassEntry.java:110)	at com.wrq.rearranger.entry.ClassEntry.parseRemainingClassContents(ClassEntry.java:186)	at com.wrq.rearranger.entry.PsiFileEntry.parseFile(PsiFileEntry.java:80)	at com.wrq.rearranger.rearrangement.Parser.parseOuterLevel(Parser.java:49)	at com.wrq.rearranger.LiveRearrangerActionHandler.liveRearrangeDocument(LiveRearrangerActionHandler.java:206)	at com.wrq.rearranger.LiveRearrangerActionHandler$1.run(LiveRearrangerActionHandler.java:139)	at com.intellij.openapi.application.impl.ApplicationImpl.runWriteAction(ApplicationImpl.java:265)	at com.wrq.rearranger.LiveRearrangerActionHandler.buildLiveRearrangerData(LiveRearrangerActionHandler.java:134)	at com.wrq.rearranger.LiveRearrangerActionHandler.execute(LiveRearrangerActionHandler.java:90)	at com.intellij.openapi.editor.actionSystem.EditorAction$1.run(EditorAction.java:40)
+
+http://www.intellij.net/forums/thread.jsp?forum=18&thread=124907&tstart=0&trange=30
+-----
+
+There was a bug in v3.7.1: if you have more variables defined in one line:
+   int a = 0, b = 0, c = 0;
